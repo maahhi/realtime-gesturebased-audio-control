@@ -1,4 +1,4 @@
-#load dataframe
+# load dataframe
 import pandas as pd
 import numpy as np
 
@@ -47,10 +47,10 @@ def body_preprocessing(class_gesture):
 
 
 
-pos_class_gesture = 'right_hand_up'#'right_hand_up''M_openhands'
+pos_class_gesture = 'gesture_class_0'#'right_hand_up''M_openhands'
 X_train = body_preprocessing(pos_class_gesture)
 num_pos_class = X_train.shape[0]
-neg_class_gestures = ['right_leg_up','left_hand_up','left_leg_up']
+neg_class_gestures = ['gesture_class_1','gesture_class_2','gesture_class_3', 'gesture_class_4', 'gesture_class_5']
 #concatenate the negative class gestures
 a = X_train.shape[0]
 print('main class members',a)
@@ -102,7 +102,7 @@ print(Y_train.shape)
 #split the data
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report,confusion_matrix
-X_train, X_test, y_train, y_test = train_test_split(X_train, Y_train, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(X_train, Y_train, test_size=0.3, random_state=45)
 
 
 from sklearn.neural_network import MLPClassifier
@@ -156,13 +156,19 @@ plt.legend(loc="best")
 plt.grid()
 plt.savefig("M-learningcurv.png")
 """
+print("class count:", mlp.classes_)
 
 #save mlp model
 import pickle
-filename = pos_class_gesture+'_mlp.sav'
+filename = pos_class_gesture+'_mlp_demo2.sav'
 pickle.dump(mlp, open(filename, 'wb'))
 
 #save standard scaler
-filename = pos_class_gesture + '_scaler.sav'
+filename = pos_class_gesture + '_scaler_demo2.sav'
 pickle.dump(scaler, open(filename, 'wb'))
+
+prediction = mlp.predict(X_train)
+print(y_train)
+print("---------------")
+print(prediction)
 

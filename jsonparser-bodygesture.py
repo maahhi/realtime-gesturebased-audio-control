@@ -72,8 +72,9 @@ def bodygesture_jsontocsv(gesture_name):
     print('done')
     #save to csv
     bfdf.to_csv(gesture_name+'.csv',index=False)
-bg = ['a_right_hand_up','a_right_leg_up','a_left_hand_up','a_left_leg_up','a_nutral_stand']
-bg = ['M_openhands']
+# bg = ['a_right_hand_up','a_right_leg_up','a_left_hand_up','a_left_leg_up','a_nutral_stand']
+# bg = ['gesture_class_0', 'gesture_class_1', 'gesture_class_2', 'gesture_class_3', 'gesture_class_4', 'gesture_class_5']
+bg = ["am_ghezi"]
 for i in range(len(bg)):
     print(bg[i])
     bodygesture_jsontocsv(bg[i])

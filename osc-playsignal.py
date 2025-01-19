@@ -15,10 +15,10 @@ SEND_PORT = 7400          # Port to send OSC messages to
 osc_client = SimpleUDPClient(SEND_IP, SEND_PORT)
 
 # load the model and standardscaler
-pos_class_gesture = 'right_hand_up'#'M_openhands'
-filename = pos_class_gesture + '_mlp.sav'
+pos_class_gesture = 'gesture_class_0'#'M_openhands'
+filename = pos_class_gesture + '_mlp_demo.sav'
 model = pickle.load(open(filename, 'rb'))
-filename = pos_class_gesture + '_scaler.sav'
+filename = pos_class_gesture + '_scaler_demo.sav'
 scaler = pickle.load(open(filename, 'rb'))
 
 # Callback function for incoming messages
@@ -39,9 +39,10 @@ def process_message(address, json_string):
         if item == 'right_foot_index':
             continue
         columns.remove(item)
-
+    
     dictionary = json.loads(json_string)
-    print(dictionary)
+    # print(dictionary[''])
+    print(len(columns))
     raw_data = np.zeros(2*len(columns))
     new_features = np.zeros(2*4) # ['left_index_heel', 'left_pinky_index', 'right_index_heel', 'right_pinky_index']
     #index_heel = foot_index + heel
@@ -62,17 +63,18 @@ def process_message(address, json_string):
     new_features = new_features/2
     #append new features to raw_data
     raw_data = np.append(raw_data,new_features)
-    #print(raw_data)
+    print(raw_data, len(raw_data))
     #scale the data
     raw_data = scaler.transform([raw_data])
     #predict the data
+    print("scaled", raw_data)
     prediction = model.predict(raw_data)
     print('prediction',prediction)
 
     #print("Trigger received, sending response...")
-    if prediction[0] == 2:
-        print("Sending signal")
-        osc_client.send_message("/signal", prediction[0])
+    # if prediction[0] == 2:
+    #     print("Sending signal")
+    #     osc_client.send_message("/signal", prediction[0])
 
 
 # Set up the dispatcher for message handling
