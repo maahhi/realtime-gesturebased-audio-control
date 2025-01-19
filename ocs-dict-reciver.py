@@ -1,7 +1,8 @@
 from pythonosc import dispatcher
 from pythonosc import osc_server
 import json
-
+from util.json2dataseries import j2ds
+import pandas as pd
 # Define the IP and port to listen on
 ip = "127.0.0.1"  # Localhost (or change to your local IP for external connections)
 port = 8000       # Port must match what is set in Max MSP
@@ -27,11 +28,14 @@ def json_dict_handler(address, json_string):
     # Decode the JSON string back into a dictionary
     dictionary = json.loads(json_string)
     print("Received dictionary:", dictionary)
-    save_json_string(json_string)
+    ds = j2ds(dictionary)
+    print(ds)
+    #save_json_string(json_string)
+    samples.append(ds)
+
 
 
 def save_handler(address, filepath):
-
     # if the filepath exist, append the temp file to filepath
     if os.path.exists(filepath+".json"):
         with open("tempdata.json", "r") as temp_file:
@@ -42,12 +46,19 @@ def save_handler(address, filepath):
     else:
         os.rename("tempdata.json", filepath+".json")
 
-
+def save_csv(address, filepath):
+    df = pd.DataFrame(samples)
+    if os.path.exists(filepath + ".csv"):
+        df.to_csv(filepath + ".csv", mode='a', header=False, index=False)
+    else:
+        df.to_csv(filepath+".csv", index=False)
+    samples.clear()
 
 # Set up the dispatcher to map the OSC address to the handler
 disp = dispatcher.Dispatcher()
 disp.map("/dictData", json_dict_handler)  # Must match the OSC address set in Max
-disp.map("/save", save_handler)  # Must match the OSC address set in Max
+#disp.map("/save", save_handler)  # Must match the OSC address set in Max
+disp.map("/save", save_csv)
 
 # Start the server to listen for incoming OSC messages
 server = osc_server.ThreadingOSCUDPServer((ip, port), disp)
