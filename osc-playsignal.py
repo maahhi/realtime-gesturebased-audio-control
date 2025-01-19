@@ -4,6 +4,7 @@ from pythonosc.udp_client import SimpleUDPClient
 import json
 import numpy as np
 import pickle
+from util.json2dataseries import j2ds
 
 # Configuration
 RECEIVE_IP = "127.0.0.1"  # IP to listen for incoming messages
@@ -17,6 +18,7 @@ osc_client = SimpleUDPClient(SEND_IP, SEND_PORT)
 # load the model and standardscaler
 pos_class_gesture = 'gesture_class_0'#'M_openhands'
 filename = pos_class_gesture + '_mlp_demo.sav'
+print(filename)
 model = pickle.load(open(filename, 'rb'))
 filename = pos_class_gesture + '_scaler_demo.sav'
 scaler = pickle.load(open(filename, 'rb'))
@@ -28,42 +30,11 @@ def process_message(address, json_string):
     :param address: The OSC address of the message.
     :param args: Arguments of the OSC message.
     """
-    global model, scaler
-    pairs = ['shoulder', 'elbow', 'wrist', 'pinky', 'index', 'hip', 'knee', 'heel', 'foot_index']
-    columns = ['nose'] + ['left_' + l for l in pairs] + ['right_' + r for r in pairs]
-    #remove these items from columns
-    removeitems = ['left_foot_index','left_heel','left_pinky',"left_index",'right_foot_index','right_heel','right_index','right_pinky']
-    for item in removeitems:
-        if item == 'left_foot_index':
-            continue
-        if item == 'right_foot_index':
-            continue
-        columns.remove(item)
+
     
     dictionary = json.loads(json_string)
-    # print(dictionary[''])
-    print(len(columns))
-    raw_data = np.zeros(2*len(columns))
-    new_features = np.zeros(2*4) # ['left_index_heel', 'left_pinky_index', 'right_index_heel', 'right_pinky_index']
-    #index_heel = foot_index + heel
-    #pinky_index = pinky + index
+    raw_data = j2ds(dictionary)
 
-    for LRN in dictionary:
-        for bodypart in dictionary[LRN]:
-            if bodypart in removeitems:
-                index = removeitems.index(bodypart)
-                index = index//2
-                new_features[2*index] = dictionary[LRN][bodypart]['x']
-                new_features[2*index+1] = dictionary[LRN][bodypart]['y']
-            if bodypart in columns:
-                index = columns.index(bodypart)
-                raw_data[2*index] = dictionary[LRN][bodypart]['x']
-                raw_data[2*index+1] = dictionary[LRN][bodypart]['y']
-    #devide all newfeatures by 2
-    new_features = new_features/2
-    #append new features to raw_data
-    raw_data = np.append(raw_data,new_features)
-    print(raw_data, len(raw_data))
     #scale the data
     raw_data = scaler.transform([raw_data])
     #predict the data

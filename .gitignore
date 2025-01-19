@@ -1,3 +1,7 @@
 .idea/
 .ipynb_checkpoints/
 __pycache__/
+*.sav
+*.pkl
+*.csv
+*.json
