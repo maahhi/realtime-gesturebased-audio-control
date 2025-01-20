@@ -16,14 +16,15 @@ SEND_PORT = 7400          # Port to send OSC messages to
 osc_client = SimpleUDPClient(SEND_IP, SEND_PORT)
 
 # load the model and standardscaler
-pos_class_gesture = 'gesture_class_0'#'M_openhands'
-filename = pos_class_gesture + '_mlp_demo.sav'
+pos_class_gesture = ''#'M_openhands'
+filename = '_mlp_demo2.sav'
 print(filename)
 model = pickle.load(open(filename, 'rb'))
-filename = pos_class_gesture + '_scaler_demo.sav'
+filename = '_scaler_demo2.sav'
 scaler = pickle.load(open(filename, 'rb'))
 
 # Callback function for incoming messages
+previous = 0
 def process_message(address, json_string):
     """
     Process incoming OSC messages and send a response.
@@ -31,21 +32,22 @@ def process_message(address, json_string):
     :param args: Arguments of the OSC message.
     """
 
-    
+    global previous
     dictionary = json.loads(json_string)
     raw_data = j2ds(dictionary)
 
     #scale the data
     raw_data = scaler.transform([raw_data])
     #predict the data
-    print("scaled", raw_data)
+    #print("scaled", raw_data)
     prediction = model.predict(raw_data)
     print('prediction',prediction)
 
     #print("Trigger received, sending response...")
-    # if prediction[0] == 2:
-    #     print("Sending signal")
-    #     osc_client.send_message("/signal", prediction[0])
+    if prediction[0] != previous:
+        osc_client.send_message("/signal", prediction[0])
+        previous = prediction[0]
+
 
 
 # Set up the dispatcher for message handling
