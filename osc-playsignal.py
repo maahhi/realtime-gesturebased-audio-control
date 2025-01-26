@@ -1,3 +1,10 @@
+'''
+This file loads the trained and scaler based on the body gesture data.
+Through a UDP connection the gesture recieved and will be classified.
+The chosen class will be sent back to MaxMSP to make changes to the current playback.
+'''
+
+
 from pythonosc.dispatcher import Dispatcher
 from pythonosc import osc_server
 from pythonosc.udp_client import SimpleUDPClient
