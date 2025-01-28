@@ -1,12 +1,21 @@
-این پروژه میخواهد نشان دهد که چگونه ویژگی های مختلف یک موسیقی مثل ساز بندی ها و پیچ و سرعت به صورت لایو تغییر کنند!
-یعنی برای هر کدام یک کنترلر داشته باشیم
+# Real-time Gesture-based Audio Control
 
-تصویر اولیه:
-چند اسلایدر در صفحه بتواند تغییراتی را در موسیقی ایجاد کند
+RGAC (Real-time Gesture-based Audio Control) is an end-to-end system of controlling audio without direct interaction with the audio player and only relying on the body gestures of the person in charge.
 
-سوال 1: با چه ابزاری انجام دهم؟
+The interface of the system is developed using MaxMSP and the training and processing of body gestures are primarily done in python3. Moveover, as of now sklearn is used for the machine learning purposes. But, every model giving the same classification output, exploiting any machine learning method or framework, may replace the baseline provided that it demonstrates a good evalutaion.
 
-#auto generated but intresting!
-[]: # سوال 1: چه کاری میخواهم انجام دهم؟
-[]: # سوال 1: چرا این کار را انجام می دهم؟
-[]: #
+## Software and Hardware Requirements
+### Minimum Hardware
+- A multi-purpose computer
+- A Camera
+### Software Requirements
+- Python3 (supporing sklearn and pythonosc)
+- MaxMSP
+
+## How to collect data
+
+## How to train the model
+
+## How to use the trained model
+
+
